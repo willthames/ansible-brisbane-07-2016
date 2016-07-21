@@ -144,6 +144,12 @@ Pipeline:
 * Apply configuration &rarr;
 * Run test suite (e.g. serverspec)
 
-# Questions?
+# Thanks
 
-# Thanks!
+## Questions?
+
+## Slides
+
+https://willthames.github.io/ansible-brisbane-07-2016
+
+

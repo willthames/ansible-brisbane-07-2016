@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Will Thames" />
+  <meta name="dcterms.date" content="2016-07-21" />
+  <title>What Ops can learn from Dev</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="reveal.js/css/reveal.css"/>
+  <link rel="stylesheet" href="overrides.css"/>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="reveal.js/css/theme/blood.css" id="theme">
+  <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+  <script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = 'reveal.js/css/print/pdf.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+  </script>
+  <!--[if lt IE 9]>
+  <script src="reveal.js/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">What Ops can learn from Dev</h1>
+    <h2 class="author">Will Thames</h2>
+    <h3 class="date">21 July 2016</h3>
+</section>
+
+<section><section id="overview" class="titleslide slide level1"><h1>Overview</h1></section><section id="about-this-talk" class="slide level2">
+<h1>About this talk</h1>
+<ul>
+<li>About how Ops write, store and use code</li>
+<li>Configuration/Deployment/Orchestration focus</li>
+<li>Heavily based on my DevOps Days Melbourne talk</li>
+<li>But the Ansible edition</li>
+</ul>
+</section><section id="about-me" class="slide level2">
+<h1>About me</h1>
+<ul>
+<li>Systems Engineer at Red Hat</li>
+<li>Previously at Suncorp and Betfair</li>
+<li>Contributor to Ansible</li>
+<li>Creator of ansible-lint, ansible-inventory-grapher and ansible-review</li>
+</ul>
+</section></section>
+<section><section id="sharing-code" class="titleslide slide level1"><h1>Sharing code</h1></section><section id="version-control" class="slide level2">
+<h1>Version control</h1>
+<ul>
+<li>Have some. Which one is relatively unimportant.</li>
+<li>Find out when something was changed, and by whom.</li>
+<li>See what changed, and hopefully why (needs good commit messages!)</li>
+<li>Go back in time - revert changes, compare differences</li>
+</ul>
+</section><section id="separation-of-code-and-data" class="slide level2">
+<h1>Separation of code and data</h1>
+<ul>
+<li>Hardcode as little as possible in your templates and task files (there is such thing as premature templating though!)</li>
+<li>Try and make it so that your code could be shared with the world without giving anything away</li>
+</ul>
+</section><section id="secrets" class="slide level2">
+<h1>Secrets</h1>
+<ul>
+<li>You will need a solution to what to do with secrets. There are many</li>
+<li>ansible-vault</li>
+<li>Hashicorp's Vault</li>
+</ul>
+</section><section id="higher-level-languages" class="slide level2">
+<h1>Higher level languages</h1>
+<p>Why use configuration management? Surely bash scripts in an ssh loop will suffice?</p>
+<p>Why use python or ruby? Surely assembly or C will suffice?</p>
+</section><section id="higher-level-languages-1" class="slide level2">
+<h1>Higher level languages</h1>
+<ul>
+<li>Repeatability</li>
+<li>Error handling</li>
+<li>Reduction of boilerplate code</li>
+<li>Abstraction of patterns to higher layers</li>
+<li>Templating</li>
+<li>API calls</li>
+</ul>
+</section><section id="abstraction-and-reuse" class="slide level2">
+<h1>Abstraction and reuse</h1>
+<ul>
+<li>As with functions, modules, libraries and packages, wrap up common operations into reusable code.</li>
+<li><p>This might be a module for installing and configuring java, or deploying a particular application type.</p></li>
+<li>Ansible has roles for grouping a bunch of operations.</li>
+<li><p>Ansible has modules for creating new operations.</p></li>
+</ul>
+</section><section id="community" class="slide level2">
+<h1>Community</h1>
+<ul>
+<li>Separation of code and data (particularly secret data) allows you to share your work with others.</li>
+<li>If you are able to share your code, others will benefit, and yet others will improve it.</li>
+<li>You can also benefit from work others have done - look for roles that others have written before writing your own.</li>
+<li>See Ansible Galaxy</li>
+</ul>
+</section><section id="data-inheritance" class="slide level2">
+<h1>Data Inheritance</h1>
+<ul>
+<li>Only write as much configuration as you need</li>
+<li>Some variables will be common to all applications across a particular environment</li>
+<li>Some variables will be common to all environments for a particular application</li>
+<li>Use Ansible groups to manage the inheritance hierarchy</li>
+<li><a href="https://github.com/willthames/ansible-inventory-grapher">ansible-inventory-grapher</a> can help show the inheritance hierarchy</li>
+</ul>
+</section><section id="inheritance" class="slide level2">
+<h1>Inheritance</h1>
+<figure>
+<img src="prod-web-server-1a.png" alt="Example hierarchy" /><figcaption>Example hierarchy</figcaption>
+</figure>
+</section><section id="repeatability" class="slide level2">
+<h1>Repeatability</h1>
+<ul>
+<li>What happens if you run your code twice?</li>
+<li>What happens if the second time is six months from now?</li>
+</ul>
+</section><section id="versions" class="slide level2">
+<h1>Versions</h1>
+<ul>
+<li>Tag your roles with version numbers. Specify a version number when including roles with a playbook.</li>
+<li>Furthermore specify versions when pulling things from yum, apt-get, git, mercurial etc.</li>
+</ul>
+</section></section>
+<section><section id="code-quality" class="titleslide slide level1"><h1>Code quality</h1></section><section id="quality-control" class="slide level2">
+<h1>Quality control</h1>
+<ul>
+<li>Use the tools</li>
+<li>ansible-lint</li>
+<li>pep8, go fmt et al.</li>
+<li>dry run mode, diff mode</li>
+</ul>
+</section><section id="best-practices-and-standards" class="slide level2">
+<h1>Best practices and Standards</h1>
+<ul>
+<li>Have some.</li>
+<li>We manage our standards and best practices as a git repo using pull requests</li>
+<li>Any changes/additions to best practices and standards must achieve a body of support (we use +2 overall)</li>
+<li>Best practices is an advisory of things to consider</li>
+<li>Standards are a set of tests, preferably automatable</li>
+</ul>
+</section><section id="code-reviews" class="slide level2">
+<h1>Code reviews</h1>
+<ul>
+<li>All code reviews should be objective. If you're objecting to a style issue, it should be written down (internally or using an existing style guide for a language/framenwork)</li>
+<li>Have a policy on what level of consensus is required to accept code into the mainline codebase</li>
+<li>This will typically be a risk management tradeoff (we use +1 for stuff that is independent and can be pinned to a version, and +1 human with +1 automated for everything that can break a lot of stuff)</li>
+<li><a href="http://willthames.github.io/2016/06/28/announcing-ansible-review.html">ansible-review</a> can help with maintaining standards at review time.</li>
+</ul>
+</section><section id="testing" class="slide level2">
+<h1>Testing</h1>
+<ul>
+<li>Have some.</li>
+<li>Production-like environments</li>
+<li>Virtual machines</li>
+<li>Containers</li>
+<li>AWS/GCE/Azure etc</li>
+<li>Anything that isn't &quot;your machine&quot; - needs to be configured using the same tooling as live.</li>
+</ul>
+</section><section id="continuous-integration" class="slide level2">
+<h1>Continuous Integration</h1>
+<p>Pipeline:</p>
+<ul>
+<li>Commit →</li>
+<li>Checkout →</li>
+<li>Static analysis →</li>
+<li>Automated provisioning →</li>
+<li>Apply configuration →</li>
+<li>Run test suite (e.g. serverspec)</li>
+</ul>
+</section></section>
+<section><section id="thanks" class="titleslide slide level1"><h1>Thanks</h1></section><section id="questions" class="slide level2">
+<h1>Questions?</h1>
+</section><section id="slides" class="slide level2">
+<h1>Slides</h1>
+<p>https://willthames.github.io/ansible-brisbane-07-2016</p>
+</section></section>
+    </div>
+  </div>
+
+
+  <script src="reveal.js/lib/js/head.min.js"></script>
+  <script src="reveal.js/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,         // Display controls in the bottom right corner
+        progress: true,         // Display a presentation progress bar
+        history: true,          // Push each slide change to the browser history
+        center: false,                       // Vertical centering of slides
+        maxScale: 1.5,                  // Bounds for smallest/largest possible content scale
+        slideNumber: false,                // Display the page number of the current slide
+        theme: 'blood', // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+//          { src: 'reveal.js/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; }, }
+//          { src: 'reveal.js/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+]});
+    </script>
+    </body>
+</html>
